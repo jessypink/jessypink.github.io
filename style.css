@@ -134,6 +134,25 @@ body.dark {
 .main-body.dark .lesson-meta {
   color: #aaa;
 }
+
+.date-picker {
+  padding: 0.5rem;
+  border-radius: 8px;
+}
+
+.date-picker input[type="date"] {
+  background-color: #fff; /* белый фон */
+  color: #000;            /* черный текст */
+  border: 1px solid #ccc; /* светло-серая рамка */
+  border-radius: 4px;
+  padding: 0.3rem 0.5rem;
+}
+
+.date-picker input[type="date"]::-webkit-datetime-edit {
+  color: #000; /* черный текст внутри даты */
+}
+
+
 .date-picker.dark {
   padding: 0.5rem;
   border-radius: 8px;
