@@ -6,10 +6,14 @@
   <title>Расписание групп</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="main-body">
 
-<header>Расписание занятий</header>
-<main>
+<header class="main-header">
+  <div class="header-title">Расписание занятий</div>
+  <button class="header-button" id="themeToggle">🌙</button>
+</header>
+
+<main class="main-main">
   <div class="date-picker">
     <input type="date" id="dateInput">
   </div>
@@ -28,13 +32,6 @@
 </main>
 
 <script src="script.js"></script>
-<script>
-  window.addEventListener('DOMContentLoaded', () => {
-    const dateInput = document.getElementById('dateInput');
-    const today = new Date().toISOString().split('T')[0]; // формат YYYY-MM-DD
-    dateInput.value = today;
-  });
-</script>
-  
+
 </body>
 </html>

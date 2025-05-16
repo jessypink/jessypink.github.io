@@ -6,6 +6,53 @@ function formatDateToAPI(date) {
   return `${day}_${month}_${year}`;
 }
 
+const today = new Date();
+today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+document.getElementById('dateInput').value = today.toISOString().split('T')[0];
+updateSchedule(today.toISOString().split('T')[0]);
+
+const toggleBtn = document.getElementById('themeToggle');
+const header = document.querySelector('.main-header');
+const main = document.querySelector('.main-main');
+const body = document.querySelector('.main-body');
+const groups = document.querySelectorAll('.group');
+const datePicker = document.querySelector('.date-picker');
+
+// Функция обновления иконки
+function updateIcon() {
+  toggleBtn.textContent = header.classList.contains('dark') ? '🌞' : '🌙';
+}
+
+// Проверка темы при загрузке
+if (localStorage.getItem('theme') === 'dark') {
+  header.classList.add('dark');
+  main.classList.add('dark');
+  body.classList.add('dark');
+  groups.forEach(group => {
+    group.classList.add('dark');
+  });
+  document.querySelectorAll('.time-badge').forEach(badge => {
+    badge.classList.toggle('dark', isDarkTheme);
+  });
+  datePicker.classList.add('dark');
+}
+updateIcon();
+
+// Обработчик клика
+toggleBtn.addEventListener('click', () => {
+  header.classList.toggle('dark');
+  main.classList.toggle('dark');
+  body.classList.toggle('dark');
+  datePicker.classList.toggle('dark');
+  groups.forEach(group => {
+    group.classList.toggle('dark');
+  });
+
+  const theme = header.classList.contains('dark') ? 'dark' : 'light';
+  localStorage.setItem('theme', theme);
+  updateIcon();
+});
+
 function formatTime(timeStr) {
   return timeStr ? timeStr.slice(0, 5) : '';
 }
@@ -92,7 +139,3 @@ lottie.loadAnimation({
   autoplay: true,
   path: 'theme.json' // путь к твоему JSON-файлу
 });
-
-const today = new Date().toISOString().split('T')[0];
-document.getElementById('dateInput').value = today;
-updateSchedule(today);
