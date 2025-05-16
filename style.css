@@ -216,12 +216,21 @@ body.dark {
   background-color: #14b866; /* красный для зачета */
 }
 
+.time-badge.exam {
+  background-color: #FF4444; /* красный для экзамена */
+}
+
 .main-body.dark .time-badge.practice {
   background-color: #FFA94D;
   color: #1a1a1a;
 }
 
 .main-body.dark .time-badge.test {
+  background-color: #FF6B6B;
+  color: #1a1a1a;
+}
+
+.main-body.dark .time-badge.exam {
   background-color: #FF6B6B;
   color: #1a1a1a;
 }

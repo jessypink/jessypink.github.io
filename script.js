@@ -95,6 +95,9 @@ function renderLessons(containerClass, lessons, groupName) {
     } else if (lesson.VID === 'КпЭ') {
       typeLabel = 'КпЭ';
       badgeClass += ' kpe';
+    } else if (lesson.VID === 'Эк') {
+      typeLabel = 'Экзамен';
+      badgeClass += ' exam';
     }
 
     div.innerHTML = `
