@@ -28,6 +28,13 @@
 </main>
 
 <script src="script.js"></script>
-
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    const dateInput = document.getElementById('dateInput');
+    const today = new Date().toISOString().split('T')[0]; // формат YYYY-MM-DD
+    dateInput.value = today;
+  });
+</script>
+  
 </body>
 </html>
