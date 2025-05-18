@@ -118,13 +118,13 @@ async function updateSchedule(date) {
   ];
 
   // Очистка и вставка "Загрузка..." с анимацией
+
+  // Показываем спиннер
   containers.forEach(container => {
     container.innerHTML = '';
-    const loading = document.createElement('div');
-    loading.className = 'loading-message';
-    loading.textContent = 'Загрузка...';
-    container.appendChild(loading);
-    setTimeout(() => loading.classList.add('show'), 10);
+    const spinner = document.createElement('div');
+    spinner.className = 'spinner';
+    container.appendChild(spinner);
   });
 
   try {
@@ -165,7 +165,7 @@ window.addEventListener('DOMContentLoaded', () => {
   dateInput.value = today.toISOString().split('T')[0];
 
   // 2. Обновляем расписание на сегодня
-  updateSchedule(dateInput.value);
+  //updateSchedule(dateInput.value);
 
   // 3. Переключатель даты по стрелкам
   const leftArrow = document.querySelector('.left-arrow');
@@ -185,7 +185,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // 4. Слушатель изменения в input
   dateInput.addEventListener('change', (e) => {
-    updateSchedule(e.target.value);
+    //updateSchedule(e.target.value);
   });
 
   const todayButton = document.getElementById('todayButton');
