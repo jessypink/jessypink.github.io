@@ -22,8 +22,10 @@ function updateIcon(isDark) {
 if (localStorage.getItem('theme') === 'dark') {
   document.body.classList.add('dark');
   updateIcon(true);
+  updateThemeColor(true);
 } else {
   updateIcon(false);
+  updateThemeColor(false);
 }
 
 // Переключатель темы
@@ -32,6 +34,7 @@ toggleBtn.addEventListener('click', () => {
   const isDark = document.body.classList.contains('dark');
   localStorage.setItem('theme', isDark ? 'dark' : 'light');
   updateIcon(isDark);
+  updateThemeColor(isDark);
 });
 
 
@@ -164,3 +167,10 @@ if ('serviceWorker' in navigator) {
   });
 }
 
+function updateThemeColor(isDark) {
+  const metaThemeColor = document.getElementById('theme-color-meta');
+  if (metaThemeColor) {
+    metaThemeColor.setAttribute('content', isDark ? '#1E1E1E' : '#FFFFFF');
+    // тут #121212 — пример темного цвета, #007BFF — светлый (синий)
+  }
+}
