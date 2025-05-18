@@ -203,11 +203,6 @@ body.dark .arrow { background-color: #2a2a2a }
   transition: background-color 0.3s ease;
 }
 
-@media (hover: none) {
-  .arrow:hover {
-    background-color: #2a2a2a !important;
-  }
-}
 @media (min-width: 768px) {
   .group-container {
     display: flex;
