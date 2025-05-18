@@ -3,19 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Расписание групп</title>
+  <title>Расписание</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#2a9df4">
   <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="icon.png" type="image/x-icon">
 </head>
 <body class="main-body">
 
 <header class="main-header">
   <div class="header-title">Расписание занятий</div>
-  <button class="header-button" id="themeToggle">🌙</button>
+  <button id="themeToggle" class="header-button">
+    <img id="themeIcon" src="moon.png" alt="Смена темы" width="24" height="24" />
+  </button>
 </header>
 
 <main class="main-main">
   <div class="date-picker">
     <input type="date" id="dateInput">
+  </div>
+
+  <div class="nav-arrows">
+    <div class="arrow left-arrow">&#8592;</div>
+    <div class="arrow right-arrow">&#8594;</div>
   </div>
 
   <div class="group-container">
@@ -30,8 +40,6 @@
     </div>
   </div>
 </main>
-
 <script src="script.js"></script>
-
 </body>
 </html>

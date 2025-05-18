@@ -12,46 +12,28 @@ document.getElementById('dateInput').value = today.toISOString().split('T')[0];
 updateSchedule(today.toISOString().split('T')[0]);
 
 const toggleBtn = document.getElementById('themeToggle');
-const header = document.querySelector('.main-header');
-const main = document.querySelector('.main-main');
-const body = document.querySelector('.main-body');
-const groups = document.querySelectorAll('.group');
-const datePicker = document.querySelector('.date-picker');
+const icon = document.getElementById('themeIcon');
 
-// Функция обновления иконки
-function updateIcon() {
-  toggleBtn.textContent = header.classList.contains('dark') ? '🌞' : '🌙';
+function updateIcon(isDark) {
+  icon.src = isDark ? 'sun.png' : 'moon.png';
 }
 
-// Проверка темы при загрузке
+// Инициализация темы при загрузке
 if (localStorage.getItem('theme') === 'dark') {
-  header.classList.add('dark');
-  main.classList.add('dark');
-  body.classList.add('dark');
-  groups.forEach(group => {
-    group.classList.add('dark');
-  });
-  document.querySelectorAll('.time-badge').forEach(badge => {
-    badge.classList.toggle('dark', isDarkTheme);
-  });
-  datePicker.classList.add('dark');
+  document.body.classList.add('dark');
+  updateIcon(true);
+} else {
+  updateIcon(false);
 }
-updateIcon();
 
-// Обработчик клика
+// Переключатель темы
 toggleBtn.addEventListener('click', () => {
-  header.classList.toggle('dark');
-  main.classList.toggle('dark');
-  body.classList.toggle('dark');
-  datePicker.classList.toggle('dark');
-  groups.forEach(group => {
-    group.classList.toggle('dark');
-  });
-
-  const theme = header.classList.contains('dark') ? 'dark' : 'light';
-  localStorage.setItem('theme', theme);
-  updateIcon();
+  document.body.classList.toggle('dark');
+  const isDark = document.body.classList.contains('dark');
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  updateIcon(isDark);
 });
+
 
 function formatTime(timeStr) {
   return timeStr ? timeStr.slice(0, 5) : '';
@@ -135,10 +117,50 @@ document.getElementById('dateInput').addEventListener('change', (e) => {
   if (date) updateSchedule(date);
 });
 
-lottie.loadAnimation({
-  container: document.getElementById('sunMoonAnimation'), // HTML-элемент
-  renderer: 'svg',
-  loop: true,
-  autoplay: true,
-  path: 'theme.json' // путь к твоему JSON-файлу
+// Проверяем, что скрипт загружается
+console.log('Скрипт загружен');
+
+window.addEventListener('DOMContentLoaded', () => {
+  // 1. Установка сегодняшней даты
+  const dateInput = document.getElementById('dateInput');
+  const today = new Date();
+  today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+  dateInput.value = today.toISOString().split('T')[0];
+
+  // 2. Обновляем расписание на сегодня
+  updateSchedule(dateInput.value);
+
+  // 3. Переключатель даты по стрелкам
+  const leftArrow = document.querySelector('.left-arrow');
+  const rightArrow = document.querySelector('.right-arrow');
+
+  function changeDate(days) {
+    const currentDate = new Date(dateInput.value);
+    currentDate.setDate(currentDate.getDate() + days);
+
+    const newDateStr = currentDate.toISOString().split('T')[0];
+    dateInput.value = newDateStr;
+    updateSchedule(newDateStr);
+  }
+
+  leftArrow.addEventListener('click', () => changeDate(-1));
+  rightArrow.addEventListener('click', () => changeDate(1));
+
+  // 4. Слушатель изменения в input
+  dateInput.addEventListener('change', (e) => {
+    updateSchedule(e.target.value);
+  });
 });
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+        .then(registration => {
+          console.log('ServiceWorker зарегистрирован с областью:', registration.scope);
+        })
+        .catch(error => {
+          console.error('Ошибка регистрации ServiceWorker:', error);
+        });
+  });
+}
+
