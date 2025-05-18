@@ -35,7 +35,6 @@ toggleBtn.addEventListener('click', () => {
   localStorage.setItem('theme', isDark ? 'dark' : 'light');
   updateIcon(isDark);
   setThemeColor(isDark);
-  alert('Цвет статусбара сменится после перезапуска приложения.');
 });
 
 
