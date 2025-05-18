@@ -55,21 +55,29 @@ function renderLessons(containerClass, lessons, groupName) {
   const groupHeader = document.querySelector(`#group${groupName} h2`);
 
   if (!lessons.length) {
-    container.innerHTML = '<i>Нет занятий</i>';
+    container.innerHTML = '';
+    const noLessons = document.createElement('div');
+    noLessons.className = 'loading-message';
+    noLessons.textContent = 'Нет занятий';
+    container.appendChild(noLessons);
+    setTimeout(() => noLessons.classList.add('show'), 10);
+
     groupHeader.innerHTML = `Группа ${groupName}`;
     return;
   }
 
+
   const date = new Date(lessons[0].DATEZAN).toLocaleDateString('ru-RU');
-  groupHeader.innerHTML = `Группа ${groupName}  `;
+  groupHeader.innerHTML = `Группа ${groupName}`;
 
   container.innerHTML = '';
-  lessons.forEach(lesson => {
+  lessons.forEach((lesson, index) => {
     const div = document.createElement('div');
-    div.className = 'lesson';
+    div.className = 'lesson'; // Без класса show на старте
+
     const timeText = `${formatTime(lesson.TIMEZAN)} – ${formatTime(lesson.TIMEZAN_END)}`;
     let typeLabel = '';
-    let badgeClass = 'time-badge'; // базовый класс
+    let badgeClass = 'time-badge';
 
     if (lesson.VID === 'Пр') {
       typeLabel = 'Практика';
@@ -86,34 +94,60 @@ function renderLessons(containerClass, lessons, groupName) {
     }
 
     div.innerHTML = `
-  <div class="lesson-time">
-    <span class="${badgeClass}">${timeText} ${typeLabel ? ` ${typeLabel}` : ''}</span>
-  </div>
-  <div class="lesson-discipline">${lesson.DISCIPLINE}</div>
-  <div class="lesson-meta">${lesson.TEACHER} | ауд. ${lesson.AUD} (${lesson.KORP})</div>
-`;
+      <div class="lesson-time">
+        <span class="${badgeClass}">${timeText} ${typeLabel ? ` ${typeLabel}` : ''}</span>
+      </div>
+      <div class="lesson-discipline">${lesson.DISCIPLINE}</div>
+      <div class="lesson-meta">${lesson.TEACHER} | ауд. ${lesson.AUD} (${lesson.KORP})</div>
+    `;
 
     container.appendChild(div);
+
+    // Плавное появление с небольшой задержкой
+    setTimeout(() => {
+      div.classList.add('show');
+    }, index * 100); // Поочередное появление, шаг 100мс
   });
 }
 
+
 async function updateSchedule(date) {
-  document.querySelector('.lessons7201').innerHTML = 'Загрузка...';
-  document.querySelector('.lessons7211').innerHTML = 'Загрузка...';
+  const containers = [
+    document.querySelector('.lessons7201'),
+    document.querySelector('.lessons7211'),
+  ];
+
+  // Очистка и вставка "Загрузка..." с анимацией
+  containers.forEach(container => {
+    container.innerHTML = '';
+    const loading = document.createElement('div');
+    loading.className = 'loading-message';
+    loading.textContent = 'Загрузка...';
+    container.appendChild(loading);
+    setTimeout(() => loading.classList.add('show'), 10);
+  });
 
   try {
     const [data7201, data7211] = await Promise.all([
       fetchSchedule(7201, date),
       fetchSchedule(7211, date)
     ]);
+
     renderLessons('lessons7201', data7201, '7201');
     renderLessons('lessons7211', data7211, '7211');
   } catch (e) {
-    document.querySelector('.lessons7201').innerHTML = 'Ошибка загрузки';
-    document.querySelector('.lessons7211').innerHTML = 'Ошибка загрузки';
+    containers.forEach(container => {
+      container.innerHTML = '';
+      const error = document.createElement('div');
+      error.className = 'loading-message error';
+      error.textContent = 'Ошибка загрузки';
+      container.appendChild(error);
+      setTimeout(() => error.classList.add('show'), 10);
+    });
     console.error('Ошибка при загрузке расписания:', e);
   }
 }
+
 
 document.getElementById('dateInput').addEventListener('change', (e) => {
   const date = e.target.value;

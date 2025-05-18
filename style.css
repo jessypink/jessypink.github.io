@@ -272,3 +272,32 @@ body.dark .today-button {
   background-color: #2a2a2a;
   color: #fff;
 }
+
+.lesson {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.lesson.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.loading-message {
+  opacity: 0;
+  transform: translateY(5px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  font-style: italic;
+  text-align: center;
+  padding: 10px;
+}
+
+.loading-message.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.loading-message.error {
+  color: #c00;
+}
