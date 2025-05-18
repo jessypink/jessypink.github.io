@@ -18,7 +18,7 @@ main,
 .date-picker,
 .lesson,
 .time-badge {
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
 body.dark .main-header {
@@ -196,9 +196,8 @@ body.dark .arrow { background-color: #2a2a2a }
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  font-size: 24px;
   user-select: none;
-  background-color: #f0f0f0; /* для наглядности */
+  background-color: #eaeaea; /* для наглядности */
   border-radius: 6px;
   outline: none;
   -webkit-tap-highlight-color: transparent; /* Убирает синий хайлайт на мобильных */
@@ -219,6 +218,15 @@ body.dark .arrow { background-color: #2a2a2a }
     background-color: #ddd;
   }
   body.dark .arrow:hover { background-color: #666666 }
+
+  .today-button:hover {
+    background-color: #ddd;
+  }
+
+  body.dark .today-button:hover {
+    background-color: #666;
+  }
+
 }
 
 .arrow svg {
@@ -233,4 +241,34 @@ body.dark .arrow svg {
 
 .mirrored {
   transform: scaleX(-1);
+}
+
+.today-button-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.today-button {
+  border: none;
+  max-width: 880px;
+  flex: 1;
+  height: 40px;
+  line-height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  background-color: #eaeaea; /* для наглядности */
+  border-radius: 6px;
+  outline: none;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent; /* Убирает синий хайлайт на мобильных */
+  transition: background-color 0.3s ease;
+}
+
+body.dark .today-button {
+  background-color: #2a2a2a;
+  color: #fff;
 }
