@@ -153,6 +153,16 @@ window.addEventListener('DOMContentLoaded', () => {
   dateInput.addEventListener('change', (e) => {
     updateSchedule(e.target.value);
   });
+
+  const todayButton = document.getElementById('todayButton');
+
+  if (todayButton && dateInput) {
+    todayButton.addEventListener('click', () => {
+      const today = new Date().toISOString().split('T')[0];
+      dateInput.value = today;
+      dateInput.dispatchEvent(new Event('change')); // если есть слушатель изменения даты
+    });
+  }
 });
 
 if ('serviceWorker' in navigator) {
