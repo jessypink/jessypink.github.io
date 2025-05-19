@@ -412,7 +412,7 @@ body.dark .no-lessons {
   padding: 12px 20px;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   font-size: 16px;
   z-index: 9999;
   animation: slideUp 0.3s ease;
@@ -429,28 +429,18 @@ body.dark .update-toast {
 
 .toast-message {
   flex: 1;
-}
-
-.toast-button {
-  background: #007aff;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 6px 12px;
-  font-size: 14px;
-  cursor: pointer;
-  white-space: nowrap;
+  text-align: left;
 }
 
 .progress-ring-wrapper {
   width: 24px;
   height: 24px;
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+/* Прогресс-бар повёрнут */
 .progress-ring {
   transform: rotate(-90deg);
   width: 100%;
@@ -492,3 +482,4 @@ body.dark .update-toast {
     transform: translate(-50%, 20px);
   }
 }
+

@@ -226,6 +226,7 @@ function setThemeColor(isDark) {
   }
 }
 
+
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', async () => {
         try {
@@ -239,18 +240,20 @@ if ('serviceWorker' in navigator) {
 
                 newWorker.addEventListener('statechange', () => {
                     if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                        // Показываем тост с предложением обновиться
-                        showUpdateToast(() => {
-                            // Отправляем сообщение воркеру, чтобы он активировался сразу
-                            newWorker.postMessage({ type: 'SKIP_WAITING' });
-                        });
+                        // Отправляем команду активироваться сразу
+                        newWorker.postMessage({ type: 'SKIP_WAITING' });
                     }
                 });
             });
 
-            // Ждём активации нового SW, чтобы перезагрузить страницу
             navigator.serviceWorker.addEventListener('controllerchange', () => {
-                window.location.reload();
+                // Показываем тост "Выполнено обновление"
+                showUpdateToast(() => {
+                    // Через 5200 мс обновляем страницу
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 5200);
+                });
             });
 
         } catch (error) {
@@ -266,7 +269,7 @@ function showUpdateToast(callback) {
 
     const message = document.createElement('div');
     message.className = 'toast-message';
-    message.textContent = 'Доступна новая версия';
+    message.textContent = 'Выполнено обновление';
 
     const progressWrapper = document.createElement('div');
     progressWrapper.className = 'progress-ring-wrapper';
@@ -292,31 +295,19 @@ function showUpdateToast(callback) {
     fgCircle.setAttribute('cy', '12');
     fgCircle.setAttribute('r', radius);
     fgCircle.setAttribute('stroke-dasharray', circumference);
-    fgCircle.setAttribute('stroke-dashoffset', '0'); // Стартовое заполнение
+    fgCircle.setAttribute('stroke-dashoffset', circumference);
 
     svg.appendChild(bgCircle);
     svg.appendChild(fgCircle);
     progressWrapper.appendChild(svg);
 
-    const button = document.createElement('button');
-    button.className = 'toast-button';
-    button.textContent = 'Обновить';
-
-    button.addEventListener('click', () => {
-        toast.classList.add('fade-out');
-        setTimeout(() => {
-            toast.remove();
-            callback?.();
-        }, 300);
-    });
-
+    // Добавляем сначала текст, потом прогресс-бар (чтобы текст был слева, прогресс — справа)
     toast.appendChild(message);
     toast.appendChild(progressWrapper);
-    toast.appendChild(button);
     document.body.appendChild(toast);
 
-    // 🔧 Настройка времени
-    const fullDuration = 5000;       // Полное время показа тоста
+    // --- остальной код анимации прогресс-бара и скрытия тоста без изменений ---
+    const fullDuration = 5200;
     const progressDuration = 4600;
 
     let start = null;
@@ -325,7 +316,7 @@ function showUpdateToast(callback) {
         if (!start) start = timestamp;
         const elapsed = timestamp - start;
         const progress = Math.min(elapsed / progressDuration, 1);
-        const offset = circumference * progress;
+        const offset = circumference * (1 - progress);
         fgCircle.setAttribute('stroke-dashoffset', offset);
 
         if (progress < 1) {
@@ -335,7 +326,6 @@ function showUpdateToast(callback) {
 
     requestAnimationFrame(animateProgress);
 
-    // ⏳ Скрытие тоста через полное время
     setTimeout(() => {
         toast.classList.add('fade-out');
         setTimeout(() => {
@@ -344,4 +334,3 @@ function showUpdateToast(callback) {
         }, 300);
     }, fullDuration);
 }
-
