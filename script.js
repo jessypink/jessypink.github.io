@@ -253,7 +253,7 @@ if ('serviceWorker' in navigator) {
                     setTimeout(() => {
                         console.log('controllerchange событие - обновляем страницу');
                         window.location.reload();
-                    }, 5100);
+                    }, 0);
                 });
             });
 
@@ -317,7 +317,7 @@ function showUpdateToast(callback) {
         if (!start) start = timestamp;
         const elapsed = timestamp - start;
         const progress = Math.min(elapsed / progressDuration, 1);
-        const offset = circumference * progress;
+        const offset = circumference * (1 - progress);
         fgCircle.setAttribute('stroke-dashoffset', offset);
 
         if (progress < 1) {
