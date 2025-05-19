@@ -1,4 +1,4 @@
-const CACHE_NAME = 'schedule-cache-v2.4'; // Увеличивай версию при изменениях
+const CACHE_NAME = 'schedule-cache-v2.5';
 const urlsToCache = [
     '/',
     '/index.html',
@@ -55,7 +55,7 @@ self.addEventListener('fetch', event => {
     const url = req.url;
 
     // Network-first для CSS и JS
-    if (url.endsWith('.css') || url.endsWith('.js')) {
+    if (url.endsWith('.css') || url.endsWith('.js') || url.endsWith('.html')) {
         event.respondWith(
             fetch(req)
                 .then(response => {

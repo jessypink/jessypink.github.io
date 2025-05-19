@@ -174,7 +174,7 @@ body.dark .date-picker input[type="date"]::-webkit-datetime-edit {
 .time-badge.kpe      { background-color: #14b866; }
 .time-badge.exam     { background-color: #FF4444; }
 
-body.dark .time-badge.practice { background-color: #FFA94D; color: #1a1a1a; }
+body.dark .time-badge.practice { background-color: #FF194D; color: #1a1a1a; }
 body.dark .time-badge.test     { background-color: #ff7d7d; color: #1a1a1a; }
 body.dark .time-badge.kpe      { background-color: #4FD17D; color: #1a1a1a; }
 body.dark .time-badge.exam     { background-color: #ff7d7d; color: #1a1a1a; }
