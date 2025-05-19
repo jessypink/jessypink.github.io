@@ -249,11 +249,11 @@ if ('serviceWorker' in navigator) {
             navigator.serviceWorker.addEventListener('controllerchange', () => {
                 // Показываем тост "Выполнено обновление"
                 showUpdateToast(() => {
-                    // Через 5200 мс обновляем страницу
+                    // Через 5100 мс обновляем страницу
                     setTimeout(() => {
                         console.log('controllerchange событие - обновляем страницу');
                         window.location.reload();
-                    }, 5200);
+                    }, 5100);
                 });
             });
 
