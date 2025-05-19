@@ -57,4 +57,4 @@ self.addEventListener('message', event => {
     }
 });
 
-//ver 1.1
+//ver 1.11
