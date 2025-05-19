@@ -1,4 +1,4 @@
-const CACHE_NAME = 'schedule-cache-v1';
+const CACHE_NAME = 'schedule-cache-v1.14';
 const urlsToCache = [
     '/',
     '/index.html',
@@ -11,7 +11,6 @@ const urlsToCache = [
     '/icon.png',
     '/icons/icon-192.png',
     '/icons/icon-512.png',
-    // Emoji images
     '/src/emoji-1.png',
     '/src/emoji-2.png',
     '/src/emoji-3.png',
@@ -29,34 +28,48 @@ const urlsToCache = [
     '/src/emoji-15.png',
 ];
 
+// Установка и кэширование файлов
 self.addEventListener('install', (event) => {
+    console.log('[SW] Установка');
     event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then((cache) => cache.addAll(urlsToCache))
+        caches.open(CACHE_NAME).then((cache) => {
+            return cache.addAll(urlsToCache);
+        })
     );
+    self.skipWaiting(); // Мгновенная активация
 });
 
+// Активация: удаляем старые кэши
+self.addEventListener('activate', (event) => {
+    console.log('[SW] Активация');
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames
+                    .filter((name) => name !== CACHE_NAME)
+                    .map((name) => {
+                        console.log('[SW] Удаление старого кэша:', name);
+                        return caches.delete(name);
+                    })
+            );
+        })
+    );
+    return self.clients.claim();
+});
+
+// Обработка запросов
 self.addEventListener('fetch', (event) => {
     event.respondWith(
-        caches.match(event.request)
-            .then((response) => response || fetch(event.request))
+        caches.match(event.request).then((response) => {
+            return response || fetch(event.request);
+        })
     );
 });
 
-self.addEventListener('install', event => {
-    self.skipWaiting(); // Активируем сразу после установки
-});
-
-self.addEventListener('activate', event => {
-    event.waitUntil(self.clients.claim()); // Контролируем все вкладки
-});
-
+// Получение сообщений от страницы
 self.addEventListener('message', (event) => {
     if (event.data?.type === 'SKIP_WAITING') {
-        console.log('[SW] Received SKIP_WAITING message');
+        console.log('[SW] Получена команда SKIP_WAITING');
         self.skipWaiting();
     }
 });
-
-
-//ver 1.14
