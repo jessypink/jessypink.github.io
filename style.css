@@ -364,3 +364,38 @@ body.dark .ios-spinner div {
   0%   { opacity: 1; }
   100% { opacity: 0.25; }
 }
+
+.no-lessons {
+    text-align: center;
+    font-family: inherit;
+    color: #666;
+}
+
+body.dark .no-lessons {
+    text-align: center;
+    color: #bebebe;
+}
+
+.no-lessons-img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    opacity: 0.8;
+    margin-top: 20px;
+    transition: transform 0.5s ease;
+}
+
+.no-lessons-img:hover {
+    transform: scale(1.05);
+}
+
+.fade-in {
+    opacity: 0;
+    animation: fadeIn 0.6s ease forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}

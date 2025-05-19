@@ -55,16 +55,19 @@ function renderLessons(containerClass, lessons, groupName) {
   const groupHeader = document.querySelector(`#group${groupName} h2`);
 
   if (!lessons.length) {
-    container.innerHTML = '';
-    const noLessons = document.createElement('div');
-    noLessons.className = 'loading-message';
-    noLessons.textContent = 'Нет занятий';
-    container.appendChild(noLessons);
-    setTimeout(() => noLessons.classList.add('show'), 10);
+    const randomIndex = Math.floor(Math.random() * 15) + 1; // 1–5
+    const imageSrc = `src/emoji-${randomIndex}.png`;
 
+    container.innerHTML = `
+    <div class="no-lessons fade-in">
+      <img src="${imageSrc}" alt="Нет занятий" class="no-lessons-img">
+      <p>Занятий нет</p>
+    </div>
+  `;
     groupHeader.innerHTML = `Группа ${groupName}`;
     return;
   }
+
 
 
   const date = new Date(lessons[0].DATEZAN).toLocaleDateString('ru-RU');
