@@ -41,3 +41,19 @@ self.addEventListener('fetch', (event) => {
             .then((response) => response || fetch(event.request))
     );
 });
+
+self.addEventListener('install', event => {
+    self.skipWaiting(); // Активируем сразу после установки
+});
+
+self.addEventListener('activate', event => {
+    event.waitUntil(self.clients.claim()); // Контролируем все вкладки
+});
+
+self.addEventListener('message', event => {
+    if (event.data?.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
+});
+
+
