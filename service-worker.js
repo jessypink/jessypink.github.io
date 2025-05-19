@@ -1,4 +1,4 @@
-const CACHE_NAME = 'schedule-cache-v2.2'; // Увеличивай версию при изменениях
+const CACHE_NAME = 'schedule-cache-v2.4'; // Увеличивай версию при изменениях
 const urlsToCache = [
     '/',
     '/index.html',
