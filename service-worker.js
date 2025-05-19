@@ -2,6 +2,7 @@ const CACHE_NAME = 'schedule-cache-v1';
 const urlsToCache = [
     '/',
     '/index.html',
+    '/arrow-left.svg',
     '/style.css',
     '/script.js',
     '/moon.png',
