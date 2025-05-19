@@ -251,6 +251,7 @@ if ('serviceWorker' in navigator) {
                 showUpdateToast(() => {
                     // Через 5200 мс обновляем страницу
                     setTimeout(() => {
+                        console.log('controllerchange событие - обновляем страницу');
                         window.location.reload();
                     }, 5200);
                 });
@@ -316,7 +317,7 @@ function showUpdateToast(callback) {
         if (!start) start = timestamp;
         const elapsed = timestamp - start;
         const progress = Math.min(elapsed / progressDuration, 1);
-        const offset = circumference * (1 - progress);
+        const offset = circumference * progress;
         fgCircle.setAttribute('stroke-dashoffset', offset);
 
         if (progress < 1) {

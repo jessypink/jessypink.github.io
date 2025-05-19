@@ -51,10 +51,12 @@ self.addEventListener('activate', event => {
     event.waitUntil(self.clients.claim()); // Контролируем все вкладки
 });
 
-self.addEventListener('message', event => {
+self.addEventListener('message', (event) => {
     if (event.data?.type === 'SKIP_WAITING') {
+        console.log('[SW] Received SKIP_WAITING message');
         self.skipWaiting();
     }
 });
+
 
 //ver 1.12
