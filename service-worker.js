@@ -1,4 +1,4 @@
-const CACHE_NAME = 'schedule-cache-v1.16';
+const CACHE_NAME = 'schedule-cache-v2'; // Увеличивай версию при изменениях
 const urlsToCache = [
     '/',
     '/index.html',
@@ -28,48 +28,56 @@ const urlsToCache = [
     '/src/emoji-15.png',
 ];
 
-// Установка и кэширование файлов
-self.addEventListener('install', (event) => {
-    console.log('[SW] Установка');
+// Установка: кэшируем начальные файлы
+self.addEventListener('install', event => {
+    self.skipWaiting();
     event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => {
-            return cache.addAll(urlsToCache);
-        })
+        caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
     );
-    self.skipWaiting(); // Мгновенная активация
 });
 
 // Активация: удаляем старые кэши
-self.addEventListener('activate', (event) => {
-    console.log('[SW] Активация');
+self.addEventListener('activate', event => {
     event.waitUntil(
-        caches.keys().then((cacheNames) => {
-            return Promise.all(
-                cacheNames
-                    .filter((name) => name !== CACHE_NAME)
-                    .map((name) => {
-                        console.log('[SW] Удаление старого кэша:', name);
-                        return caches.delete(name);
-                    })
-            );
-        })
-    );
-    return self.clients.claim();
-});
-
-// Обработка запросов
-self.addEventListener('fetch', (event) => {
-    event.respondWith(
-        caches.match(event.request).then((response) => {
-            return response || fetch(event.request);
-        })
+        caches.keys().then(keys =>
+            Promise.all(
+                keys
+                    .filter(key => key !== CACHE_NAME)
+                    .map(key => caches.delete(key))
+            )
+        ).then(() => self.clients.claim())
     );
 });
 
-// Получение сообщений от страницы
-self.addEventListener('message', (event) => {
+// Логика обработки запросов
+self.addEventListener('fetch', event => {
+    const req = event.request;
+    const url = req.url;
+
+    // Network-first для CSS и JS
+    if (url.endsWith('.css') || url.endsWith('.js')) {
+        event.respondWith(
+            fetch(req)
+                .then(response => {
+                    return caches.open(CACHE_NAME).then(cache => {
+                        cache.put(req, response.clone());
+                        return response;
+                    });
+                })
+                .catch(() => caches.match(req))
+        );
+    } else {
+        // Cache-first для остального
+        event.respondWith(
+            caches.match(req).then(response => response || fetch(req))
+        );
+    }
+});
+
+// Принудительная активация
+self.addEventListener('message', event => {
     if (event.data?.type === 'SKIP_WAITING') {
-        console.log('[SW] Получена команда SKIP_WAITING');
+        console.log('[SW] SKIP_WAITING получен');
         self.skipWaiting();
     }
 });
