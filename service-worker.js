@@ -59,4 +59,4 @@ self.addEventListener('message', (event) => {
 });
 
 
-//ver 1.12
+//ver 1.13
