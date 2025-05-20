@@ -1,10 +1,10 @@
-const CACHE_NAME = 'schedule-cache-v2.9';
+const CACHE_NAME = 'schedule-cache-v2.91';
 const urlsToCache = [
     '/',
     '/index.html',
     '/arrow-left.svg',
-    '/style.css?v=2.9',
-    '/script.js?v=2.9',
+    '/style.css?v=2.91',
+    '/script.js?v=2.91',
     '/moon.png',
     '/sun.png',
     '/manifest.json',

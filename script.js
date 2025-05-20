@@ -203,6 +203,7 @@ document.getElementById('dateInput').addEventListener('change', (e) => {
 console.log('Скрипт загружен');
 
 window.addEventListener('DOMContentLoaded', () => {
+
     const badge = document.querySelector(".date-badge");
     const date = new Date();
     const day = date.getDate();
