@@ -1,10 +1,10 @@
-const CACHE_NAME = 'schedule-cache-v2.6';
+const CACHE_NAME = 'schedule-cache-v2.9';
 const urlsToCache = [
     '/',
     '/index.html',
     '/arrow-left.svg',
-    '/style.css',
-    '/script.js',
+    '/style.css?v=2.9',
+    '/script.js?v=2.9',
     '/moon.png',
     '/sun.png',
     '/manifest.json',
@@ -38,21 +38,39 @@ self.addEventListener('install', event => {
 
 // Активация: удаляем старые кэши
 self.addEventListener('activate', event => {
+    const cacheWhitelist = [CACHE_NAME];
     event.waitUntil(
-        caches.keys().then(keys =>
-            Promise.all(
-                keys
-                    .filter(key => key !== CACHE_NAME)
-                    .map(key => caches.delete(key))
-            )
-        ).then(() => self.clients.claim())
+        caches.keys().then(keys => {
+            return Promise.all(
+                keys.map(key => {
+                    if (!cacheWhitelist.includes(key)) {
+                        return caches.delete(key);
+                    }
+                })
+            );
+        }).then(() => self.clients.claim())
     );
 });
+
 
 // Логика обработки запросов
 self.addEventListener('fetch', event => {
     const req = event.request;
     const url = req.url;
+
+    if (request.mode === 'navigate') {
+        event.respondWith(
+            fetch(request)
+                .then((networkResponse) => {
+                    return caches.open(CACHE_NAME).then(cache => {
+                        cache.put(request, networkResponse.clone());
+                        return networkResponse;
+                    });
+                })
+                .catch(() => caches.match('/index.html'))
+        );
+        return;
+    }
 
     // Network-first для CSS и JS
     if (url.endsWith('.css') || url.endsWith('.js') || url.endsWith('.html')) {
