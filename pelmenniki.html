@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input {
+            padding: 8px;
+            font-size: 16px;
+        }
+        .total {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        .rate-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="input-container" id="inputs">
+        <input type="number" placeholder="Введите число" class="money-input">
+        <input type="number" placeholder="Введите число" class="money-input">
+    </div>
+    
+    <div class="total">
+        Результат: <span id="result">0</span> ₽
+    </div>
+    
+    <div class="rate-container">
+        <span>Ставка</span>
+        <input type="number" id="rate" value="120">
+    </div>
+
+    <script>
+        const container = document.getElementById("inputs");
+        const resultElement = document.getElementById("result");
+        const rateInput = document.getElementById("rate");
+
+        // Обновляем результат при любом изменении
+        container.addEventListener("input", updateResult);
+        rateInput.addEventListener("input", updateResult);
+
+        // Добавляем новый инпут, если введено значение в последний
+        container.addEventListener("input", function(e) {
+            if (e.target.classList.contains("money-input")) {
+                const inputs = document.querySelectorAll(".money-input");
+                if (e.target === inputs[inputs.length - 1] && e.target.value !== "") {
+                    addNewInput();
+                }
+            }
+        });
+
+        function addNewInput() {
+            const newInput = document.createElement("input");
+            newInput.type = "number";
+            newInput.placeholder = "Введите число";
+            newInput.classList.add("money-input");
+            container.appendChild(newInput);
+        }
+
+        function updateResult() {
+            const inputs = document.querySelectorAll(".money-input");
+            const rate = parseFloat(rateInput.value) || 0;
+            let sum = 0;
+            
+            inputs.forEach(input => {
+                const value = parseFloat(input.value) || 0;
+                sum += value;
+            });
+            
+            const calculation = (sum / 1000) * rate;
+            resultElement.textContent = calculation.toFixed(2); // Округляем до 2 знаков
+        }
+    </script>
+</body>
+</html>
