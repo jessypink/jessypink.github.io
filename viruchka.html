@@ -1,164 +1,379 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Учёт выручки</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .section {
-            margin-bottom: 30px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        h2 {
-            margin-top: 0;
-            color: #333;
-        }
-        .input-container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        input {
-            padding: 8px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .total {
-            font-weight: bold;
-            font-size: 16px;
-            margin: 10px 0;
-            padding: 8px;
-            background-color: #f5f5f5;
-            border-radius: 4px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Учёт выручки</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #f1f1f1;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .sticky-top {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      background-color: #121212;
+      padding-top: 10px;
+      margin-top: 10px;
+    }
+    .section:not(.sticky-top) {
+      margin-top: 20px;
+    }
+    .section {
+      margin-bottom: 30px;
+      padding: 25px;
+      background-color: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 35px;
+    }
+    h2 {
+      margin-top: 0;
+      color: #ffffff;
+    }
+    .input-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 15px;
+      padding-right: 25px;
+    }
+    .floating-group {
+      position: relative;
+    }
+    .floating-input {
+      width: 100%;
+      padding: 12px 10px 12px 10px;
+      font-size: 16px;
+      background: #2c2c2c;
+      color: #fff;
+      padding-right: 14px;
+      border: 1px solid #444;
+      border-radius: 4px;
+    }
+    .floating-label {
+      position: absolute;
+      left: 12px;
+      top: 12px;
+      color: #aaa;
+      background-color: #2C2C2C;
+      border-radius: 4px;
+      padding: 0 4px;
+      transition: 0.2s ease all;
+      pointer-events: none;
+      font-size: 16px;
+    }
+    /* Зеленый цвет подсказки при фокусе/заполненности */
+    .floating-input:focus + .floating-label,
+    .floating-input:not(:placeholder-shown) + .floating-label {
+      top: -8px;
+      left: 8px;
+      font-size: 13px;
+      color: #4caf50; /* зеленый */
+    }
+    .total {
+      font-weight: bold;
+      font-size: 16px;
+      margin: 10px 0;
+      padding: 8px;
+      background-color: #2a2a2a;
+      border-radius: 4px;
+      color: #f1f1f1;
+    }
+    .mismatch-section {
+      text-align: center;
+      padding: 24px 16px;
+      margin-top: 32px;
+      background-color: #1e1e1e;
+      border-radius: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .mismatch-buttons {
+      margin-top: 16px;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .mismatch-button {
+      background-color: #2a2a2a;
+      color: white;
+      padding: 12px 16px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.2s;
+    }
+
+    .mismatch-button:hover {
+      background-color: #444;
+    }
+
+    .mismatch-button.less {
+      background-color: #aa3d3d;
+    }
+
+    .mismatch-button.less:hover {
+      background-color: #cc5a5a;
+    }
+
+    .mismatch-button.more {
+      background-color: #3d7faa;
+    }
+
+    .mismatch-button.more:hover {
+      background-color: #5aa6cc;
+    }
+
+    /* --- Модальное окно --- */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal {
+      background: #2a2a2a;
+      padding: 20px;
+      border-radius: 15px;
+      max-width: 400px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.7);
+      color: #eee;
+      position: relative;
+      text-align: left;
+    }
+    .modal h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+    }
+    .modal p {
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+    .modal button.close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: transparent;
+      border: none;
+      color: #ccc;
+      font-size: 22px;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .modal button.close-btn:hover {
+      color: #fff;
+    }
+  </style>
 </head>
 <body>
-    <div class="section">
-        <h2>Общая выручка</h2>
-        <div class="total" id="totalRevenue">0 ₽</div>
+<div class="section sticky-top">
+  <h2>Общая выручка</h2>
+  <div class="total" id="totalRevenue">0 ₽</div>
+</div>
+
+<div class="section">
+  <h2>Терминал</h2>
+  <div class="input-container" id="terminalInputs">
+    <div class="floating-group">
+      <input type="number" placeholder=" " class="floating-input terminal-input">
+      <label class="floating-label">Сумма</label>
     </div>
-
-    <div class="section">
-        <h2>Терминал</h2>
-        <div class="input-container" id="terminalInputs">
-            <input type="number" placeholder="Сумма" class="terminal-input">
-            <input type="number" placeholder="Сумма" class="terminal-input">
-        </div>
-        <div class="total">Терминал: <span id="terminalSum">0</span> ₽</div>
+    <div class="floating-group">
+      <input type="number" placeholder=" " class="floating-input terminal-input">
+      <label class="floating-label">Сумма</label>
     </div>
+  </div>
+  <div class="total">Терминал: <span id="terminalSum">0</span> ₽</div>
+</div>
 
-    <div class="section">
-        <h2>Нал</h2>
-        <div class="input-container" id="cashInputs">
-            <input type="number" placeholder="Сумма" class="cash-input">
-            <input type="number" placeholder="Сумма" class="cash-input">
-        </div>
-        <div class="total">Нал: <span id="cashSum">0</span> ₽</div>
+<div class="section">
+  <h2>Нал</h2>
+  <div class="input-container" id="cashInputs">
+    <div class="floating-group">
+      <input type="number" placeholder=" " class="floating-input cash-input">
+      <label class="floating-label">Сумма</label>
     </div>
-
-    <div class="section">
-        <h2>Яндекс</h2>
-        <div class="input-container" id="yandexInputs">
-            <input type="number" placeholder="Сумма" class="yandex-input">
-            <input type="number" placeholder="Сумма" class="yandex-input">
-        </div>
-        <div class="total">Яндекс: <span id="yandexSum">0</span> ₽</div>
+    <div class="floating-group">
+      <input type="number" placeholder=" " class="floating-input cash-input">
+      <label class="floating-label">Сумма</label>
     </div>
+  </div>
+  <div class="total">Нал: <span id="cashSum">0</span> ₽</div>
+</div>
 
-    <div class="section">
-        <h2>Расход</h2>
-        <div class="input-container" id="expenseInputs">
-            <input type="number" placeholder="Сумма расхода" class="expense-input">
-            <input type="number" placeholder="Сумма расхода" class="expense-input">
-        </div>
-        <div class="total">Расход: <span id="expenseSum">0</span> ₽</div>
+<div class="section">
+  <h2>Яндекс</h2>
+  <div class="input-container" id="yandexInputs">
+    <div class="floating-group">
+      <input type="number" placeholder=" " class="floating-input yandex-input">
+      <label class="floating-label">Сумма</label>
     </div>
-
-    <div class="section">
-        <h2>Остаток</h2>
-        <div class="input-container">
-            <input type="number" id="yesterdayBalance" placeholder="Остаток со вчера">
-        </div>
-        <div class="total">Остаток: <span id="balanceResult">0</span> ₽</div>
+    <div class="floating-group">
+      <input type="number" placeholder=" " class="floating-input yandex-input">
+      <label class="floating-label">Сумма</label>
     </div>
+  </div>
+  <div class="total">Яндекс: <span id="yandexSum">0</span> ₽</div>
+</div>
 
-    <script>
-        // Функция для создания динамических инпутов
-        function setupDynamicInputs(containerClass, sumElementId) {
-            const container = document.getElementById(containerClass + "Inputs");
-            const sumElement = document.getElementById(sumElementId);
+<div class="section">
+  <h2>Расход</h2>
+  <div class="input-container" id="expenseInputs">
+    <div class="floating-group">
+      <input type="number" placeholder=" " class="floating-input expense-input">
+      <label class="floating-label">Сумма расхода</label>
+    </div>
+    <div class="floating-group">
+      <input type="number" placeholder=" " class="floating-input expense-input">
+      <label class="floating-label">Сумма расхода</label>
+    </div>
+  </div>
+  <div class="total">Расход: <span id="expenseSum">0</span> ₽</div>
+</div>
 
-            container.addEventListener("input", function(e) {
-                if (e.target.classList.contains(containerClass + "-input")) {
-                    updateSectionSum(containerClass);
-                    
-                    const inputs = document.querySelectorAll("." + containerClass + "-input");
-                    if (e.target === inputs[inputs.length - 1] && e.target.value !== "") {
-                        const newInput = document.createElement("input");
-                        newInput.type = "number";
-                        newInput.placeholder = "Сумма";
-                        newInput.classList.add(containerClass + "-input");
-                        container.appendChild(newInput);
-                    }
-                }
-            });
+<div class="section">
+  <h2>Остаток</h2>
+  <div class="input-container">
+    <div class="floating-group">
+      <input type="number" id="yesterdayBalance" placeholder=" " class="floating-input">
+      <label class="floating-label">Остаток со вчера</label>
+    </div>
+  </div>
+  <div class="total">Остаток: <span id="balanceResult">0</span> ₽</div>
+</div>
+
+<div class="section mismatch-section">
+  <h2>Остаток не сошёлся?</h2>
+  <div class="mismatch-buttons">
+    <button class="mismatch-button less" data-modal="modal-less">В кассе меньше денег</button>
+    <button class="mismatch-button more" data-modal="modal-more">В кассе больше денег</button>
+  </div>
+</div>
+
+<!-- Модальные окна -->
+<div id="modal-less" class="modal-overlay">
+  <div class="modal">
+    <button class="close-btn" aria-label="Закрыть">&times;</button>
+    <h3>В кассе меньше денег</h3>
+    <p>Если остаток меньше, значит забыл учесть какой-то расход или расходы.</p>
+  </div>
+</div>
+
+<div id="modal-more" class="modal-overlay">
+  <div class="modal">
+    <button class="close-btn" aria-label="Закрыть">&times;</button>
+    <h3>В кассе больше денег</h3>
+    <p>Если в кассе больше денег, значит не учел какой-то доход или доходы.</p>
+  </div>
+</div>
+
+<script>
+  function setupDynamicInputs(containerClass, sumElementId) {
+    const container = document.getElementById(containerClass + "Inputs");
+    const sumElement = document.getElementById(sumElementId);
+
+    container.addEventListener("input", function(e) {
+      if (e.target.classList.contains(containerClass + "-input")) {
+        updateSectionSum(containerClass);
+
+        const inputs = document.querySelectorAll("." + containerClass + "-input");
+        if (e.target === inputs[inputs.length - 1] && e.target.value !== "") {
+          const group = document.createElement("div");
+          group.className = "floating-group";
+
+          const newInput = document.createElement("input");
+          newInput.type = "number";
+          newInput.placeholder = " ";
+          newInput.classList.add("floating-input", containerClass + "-input");
+
+          const newLabel = document.createElement("label");
+          newLabel.className = "floating-label";
+          newLabel.textContent = containerClass === 'expense' ? 'Сумма расхода' : 'Сумма';
+
+          group.appendChild(newInput);
+          group.appendChild(newLabel);
+          container.appendChild(group);
         }
+      }
+    });
+  }
 
-        // Функция обновления суммы в разделе
-        function updateSectionSum(sectionClass) {
-            const inputs = document.querySelectorAll("." + sectionClass + "-input");
-            let sum = 0;
-            
-            inputs.forEach(input => {
-                const value = parseFloat(input.value) || 0;
-                sum += value;
-            });
-            
-            document.getElementById(sectionClass + "Sum").textContent = sum.toFixed(2);
-            updateTotalRevenue();
-            updateBalance();
-        }
+  function updateSectionSum(sectionClass) {
+    const inputs = document.querySelectorAll("." + sectionClass + "-input");
+    let sum = 0;
 
-        // Функция обновления общей выручки
-        function updateTotalRevenue() {
-            const terminalSum = parseFloat(document.getElementById("terminalSum").textContent) || 0;
-            const cashSum = parseFloat(document.getElementById("cashSum").textContent) || 0;
-            const yandexSum = parseFloat(document.getElementById("yandexSum").textContent) || 0;
-            const expenseSum = parseFloat(document.getElementById("expenseSum").textContent) || 0;
-            
-            const total = terminalSum + cashSum + yandexSum;
-            document.getElementById("totalRevenue").textContent = total.toFixed(2) + " ₽";
-        }
+    inputs.forEach(input => {
+      const value = parseFloat(input.value) || 0;
+      sum += value;
+    });
 
-        // Функция расчёта остатка
-        function updateBalance() {
-            const yesterdayBalance = parseFloat(document.getElementById("yesterdayBalance").value) || 0;
-            const expenseSum = parseFloat(document.getElementById("expenseSum").textContent) || 0;
-            const cashSum = parseFloat(document.getElementById("cashSum").textContent) || 0;
-            
-            const balance = yesterdayBalance - expenseSum + cashSum;
-            document.getElementById("balanceResult").textContent = balance.toFixed(2) + " ₽";
-        }
+    document.getElementById(sectionClass + "Sum").textContent = sum.toFixed(2);
+    updateTotalRevenue();
+    updateBalance();
+  }
 
-        // Инициализация всех разделов
-        setupDynamicInputs("terminal", "terminalSum");
-        setupDynamicInputs("cash", "cashSum");
-        setupDynamicInputs("yandex", "yandexSum");
-        setupDynamicInputs("expense", "expenseSum");
+  function updateTotalRevenue() {
+    const terminalSum = parseFloat(document.getElementById("terminalSum").textContent) || 0;
+    const cashSum = parseFloat(document.getElementById("cashSum").textContent) || 0;
+    const yandexSum = parseFloat(document.getElementById("yandexSum").textContent) || 0;
 
-        // Отслеживание изменения остатка со вчера
-        document.getElementById("yesterdayBalance").addEventListener("input", updateBalance);
-    </script>
+    const total = terminalSum + cashSum + yandexSum;
+    document.getElementById("totalRevenue").textContent = total.toFixed(2) + " ₽";
+  }
+
+  function updateBalance() {
+    const yesterdayBalance = parseFloat(document.getElementById("yesterdayBalance").value) || 0;
+    const expenseSum = parseFloat(document.getElementById("expenseSum").textContent) || 0;
+    const cashSum = parseFloat(document.getElementById("cashSum").textContent) || 0;
+
+    const balance = yesterdayBalance - expenseSum + cashSum;
+    document.getElementById("balanceResult").textContent = balance.toFixed(2) + " ₽";
+  }
+
+  setupDynamicInputs("terminal", "terminalSum");
+  setupDynamicInputs("cash", "cashSum");
+  setupDynamicInputs("yandex", "yandexSum");
+  setupDynamicInputs("expense", "expenseSum");
+
+  document.getElementById("yesterdayBalance").addEventListener("input", updateBalance);
+
+  // Работа с модалками
+  document.querySelectorAll(".mismatch-button").forEach(button => {
+    button.addEventListener("click", () => {
+      const modalId = button.getAttribute("data-modal");
+      const modal = document.getElementById(modalId);
+      if(modal) modal.classList.add("active");
+    });
+  });
+
+  document.querySelectorAll(".modal .close-btn").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.target.closest(".modal-overlay").classList.remove("active");
+    });
+  });
+
+  // Закрыть модалку по клику вне окна
+  document.querySelectorAll(".modal-overlay").forEach(modal => {
+    modal.addEventListener("click", e => {
+      if(e.target === modal) {
+        modal.classList.remove("active");
+      }
+    });
+  });
+</script>
 </body>
 </html>
