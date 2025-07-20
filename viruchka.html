@@ -137,7 +137,7 @@
             const yandexSum = parseFloat(document.getElementById("yandexSum").textContent) || 0;
             const expenseSum = parseFloat(document.getElementById("expenseSum").textContent) || 0;
             
-            const total = terminalSum + cashSum + yandexSum - expenseSum;
+            const total = terminalSum + cashSum + yandexSum;
             document.getElementById("totalRevenue").textContent = total.toFixed(2) + " ₽";
         }
 
