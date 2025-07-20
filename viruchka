@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Учёт выручки</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        input {
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .total {
+            font-weight: bold;
+            font-size: 16px;
+            margin: 10px 0;
+            padding: 8px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="section">
+        <h2>Общая выручка</h2>
+        <div class="total" id="totalRevenue">0 ₽</div>
+    </div>
+
+    <div class="section">
+        <h2>Терминал</h2>
+        <div class="input-container" id="terminalInputs">
+            <input type="number" placeholder="Сумма" class="terminal-input">
+            <input type="number" placeholder="Сумма" class="terminal-input">
+        </div>
+        <div class="total">Терминал: <span id="terminalSum">0</span> ₽</div>
+    </div>
+
+    <div class="section">
+        <h2>Нал</h2>
+        <div class="input-container" id="cashInputs">
+            <input type="number" placeholder="Сумма" class="cash-input">
+            <input type="number" placeholder="Сумма" class="cash-input">
+        </div>
+        <div class="total">Нал: <span id="cashSum">0</span> ₽</div>
+    </div>
+
+    <div class="section">
+        <h2>Яндекс</h2>
+        <div class="input-container" id="yandexInputs">
+            <input type="number" placeholder="Сумма" class="yandex-input">
+            <input type="number" placeholder="Сумма" class="yandex-input">
+        </div>
+        <div class="total">Яндекс: <span id="yandexSum">0</span> ₽</div>
+    </div>
+
+    <div class="section">
+        <h2>Расход</h2>
+        <div class="input-container" id="expenseInputs">
+            <input type="number" placeholder="Сумма расхода" class="expense-input">
+            <input type="number" placeholder="Сумма расхода" class="expense-input">
+        </div>
+        <div class="total">Расход: <span id="expenseSum">0</span> ₽</div>
+        
+        <div class="input-container">
+            <input type="number" id="yesterdayBalance" placeholder="Остаток со вчера">
+        </div>
+        <div class="total">Остаток: <span id="balanceResult">0</span> ₽</div>
+    </div>
+
+    <script>
+        // Функция для создания динамических инпутов
+        function setupDynamicInputs(containerClass, sumElementId) {
+            const container = document.getElementById(containerClass + "Inputs");
+            const sumElement = document.getElementById(sumElementId);
+
+            container.addEventListener("input", function(e) {
+                if (e.target.classList.contains(containerClass + "-input")) {
+                    updateSectionSum(containerClass);
+                    
+                    const inputs = document.querySelectorAll("." + containerClass + "-input");
+                    if (e.target === inputs[inputs.length - 1] && e.target.value !== "") {
+                        const newInput = document.createElement("input");
+                        newInput.type = "number";
+                        newInput.placeholder = "Сумма";
+                        newInput.classList.add(containerClass + "-input");
+                        container.appendChild(newInput);
+                    }
+                }
+            });
+        }
+
+        // Функция обновления суммы в разделе
+        function updateSectionSum(sectionClass) {
+            const inputs = document.querySelectorAll("." + sectionClass + "-input");
+            let sum = 0;
+            
+            inputs.forEach(input => {
+                const value = parseFloat(input.value) || 0;
+                sum += value;
+            });
+            
+            document.getElementById(sectionClass + "Sum").textContent = sum.toFixed(2);
+            updateTotalRevenue();
+            updateBalance();
+        }
+
+        // Функция обновления общей выручки
+        function updateTotalRevenue() {
+            const terminalSum = parseFloat(document.getElementById("terminalSum").textContent) || 0;
+            const cashSum = parseFloat(document.getElementById("cashSum").textContent) || 0;
+            const yandexSum = parseFloat(document.getElementById("yandexSum").textContent) || 0;
+            
+            const total = terminalSum + cashSum + yandexSum;
+            document.getElementById("totalRevenue").textContent = total.toFixed(2) + " ₽";
+        }
+
+        // Функция расчёта остатка
+        function updateBalance() {
+            const yesterdayBalance = parseFloat(document.getElementById("yesterdayBalance").value) || 0;
+            const expenseSum = parseFloat(document.getElementById("expenseSum").textContent) || 0;
+            const cashSum = parseFloat(document.getElementById("cashSum").textContent) || 0;
+            
+            const balance = yesterdayBalance - expenseSum + cashSum;
+            document.getElementById("balanceResult").textContent = balance.toFixed(2) + " ₽";
+        }
+
+        // Инициализация всех разделов
+        setupDynamicInputs("terminal", "terminalSum");
+        setupDynamicInputs("cash", "cashSum");
+        setupDynamicInputs("yandex", "yandexSum");
+        setupDynamicInputs("expense", "expenseSum");
+
+        // Отслеживание изменения остатка со вчера
+        document.getElementById("yesterdayBalance").addEventListener("input", updateBalance);
+    </script>
+</body>
+</html>
